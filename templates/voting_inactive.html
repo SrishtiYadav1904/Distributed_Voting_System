@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voting Inactive - Voting System</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            max-width: 500px;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        h1 {
+            color: #f39c12;
+            margin-bottom: 20px;
+        }
+        .message {
+            font-size: 1.2em;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #fff3cd;
+            border-radius: 8px;
+            border: 1px solid #ffeaa7;
+        }
+        .btn {
+            background-color: #3498db;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        .btn-danger {
+            background-color: #e74c3c;
+        }
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+    </style>
+    <script>
+        // Auto-refresh every 5 seconds to check if voting becomes active
+        setInterval(() => {
+            location.reload();
+        }, 5000);
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>⏸️ Voting Not Active</h1>
+        
+        <div class="message">
+            Voting is not currently active. Please wait for the administrator to start the voting process.
+        </div>
+        
+        <div>
+            <a href="/results" class="btn">View Results</a>
+            <a href="/logout" class="btn btn-danger">Logout</a>
+        </div>
+        
+        <p style="color: #7f8c8d; font-style: italic; margin-top: 20px;">
+            Page will refresh automatically every 5 seconds
+        </p>
+    </div>
+</body>
+</html>

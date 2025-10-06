@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Results Pending - Voting System</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            max-width: 500px;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        h1 {
+            color: #f39c12;
+            margin-bottom: 20px;
+        }
+        .message {
+            font-size: 1.2em;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #d1ecf1;
+            border-radius: 8px;
+            border: 1px solid #bee5eb;
+        }
+        .btn {
+            background-color: #3498db;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 2s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+    <script>
+        // Auto-refresh every 5 seconds to check if results are published
+        setInterval(() => {
+            location.reload();
+        }, 5000);
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>⏳ Results Pending</h1>
+        
+        <div class="spinner"></div>
+        
+        <div class="message">
+            Voting results will be available after the administrator publishes them. Please wait...
+        </div>
+        
+        <div>
+            <a href="/" class="btn">Back to Voting</a>
+            <a href="/logout" class="btn">Logout</a>
+        </div>
+        
+        <p style="color: #7f8c8d; font-style: italic; margin-top: 20px;">
+            Page will refresh automatically every 5 seconds
+        </p>
+    </div>
+</body>
+</html>

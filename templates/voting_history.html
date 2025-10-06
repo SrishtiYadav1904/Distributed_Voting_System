@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voting History - Admin Dashboard</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        .navigation {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .btn {
+            background-color: #3498db;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            text-decoration: none;
+            display: inline-block;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        .btn-secondary {
+            background-color: #95a5a6;
+        }
+        .btn-secondary:hover {
+            background-color: #7f8c8d;
+        }
+        .session-card {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            border-left: 5px solid #3498db;
+        }
+        .session-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .session-title {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .session-date {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        .winner-badge {
+            background: #f39c12;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        .vote-results {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .vote-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px solid #ecf0f1;
+        }
+        .vote-candidate {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+        .vote-count {
+            font-size: 1.5em;
+            color: #3498db;
+        }
+        .participants-section {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+        .participants-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .participant-item {
+            background: #e8f5e8;
+            padding: 8px;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 0.9em;
+        }
+        .no-history {
+            text-align: center;
+            padding: 50px;
+            color: #7f8c8d;
+            font-size: 1.2em;
+        }
+        .current-session-info {
+            background: #d1ecf1;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .stats-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: #e8f5e8;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #27ae60;
+        }
+        .stat-label {
+            color: #2c3e50;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📋 Voting History</h1>
+        
+        <div class="navigation">
+            <a href="/admin" class="btn">← Back to Admin Dashboard</a>
+            <a href="/" class="btn btn-secondary">Main Interface</a>
+        </div>
+        
+        <div class="current-session-info">
+            <h3>Current Session: {{ current_session }}</h3>
+            <p>You are currently managing voting session {{ current_session }}. Completed sessions are shown below.</p>
+        </div>
+        
+        {% if history %}
+        <!-- Summary Statistics -->
+        <div class="stats-summary">
+            <div class="stat-card">
+                <div class="stat-number">{{ history|length }}</div>
+                <div class="stat-label">Total Sessions</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ history|sum(attribute='total_votes') }}</div>
+                <div class="stat-label">Total Votes Cast</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ history|map(attribute='participants')|map('length')|sum }}</div>
+                <div class="stat-label">Total Participations</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ (history|sum(attribute='total_votes') / history|length)|round(1) if history|length > 0 else 0 }}</div>
+                <div class="stat-label">Avg Votes/Session</div>
+            </div>
+        </div>
+        
+        <!-- Session History -->
+        {% for session in history|reverse %}
+        <div class="session-card">
+            <div class="session-header">
+                <div>
+                    <div class="session-title">Session {{ session.session_id }}</div>
+                    <div class="session-date">{{ session.start_time }}</div>
+                </div>
+                {% if session.winner %}
+                <div class="winner-badge">🏆 Winner: {{ session.winner }}</div>
+                {% else %}
+                <div class="winner-badge" style="background-color: #95a5a6;">No Winner</div>
+                {% endif %}
+            </div>
+            
+            <div class="vote-results">
+                {% for candidate, votes in session.votes.items() %}
+                <div class="vote-item {% if candidate == session.winner %}winner-item{% endif %}" 
+                     {% if candidate == session.winner %}style="border-color: #f39c12; background-color: #fff8e1;"{% endif %}>
+                    <div class="vote-candidate">{{ candidate }}</div>
+                    <div class="vote-count">{{ votes }}</div>
+                    {% if session.total_votes > 0 %}
+                    <div style="font-size: 0.8em; color: #7f8c8d;">
+                        {{ "%.1f"|format((votes / session.total_votes * 100)) }}%
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            
+            <div style="text-align: center; margin: 15px 0; color: #2c3e50;">
+                <strong>Total Votes: {{ session.total_votes }}</strong> | 
+                <strong>Participants: {{ session.participants|length }}</strong>
+            </div>
+            
+            {% if session.voter_details %}
+            <div class="participants-section">
+                <h4>Voting Details:</h4>
+                <div class="participants-grid">
+                    {% for voter in session.voter_details %}
+                    <div class="participant-item">
+                        <strong>{{ voter.name }}</strong><br>
+                        <small>→ {{ voter.vote }}</small>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+        
+        {% else %}
+        <div class="no-history">
+            <h3>No Voting History Yet</h3>
+            <p>Complete your first voting session to see history here.</p>
+            <p>Use "Start New Voting" after publishing results to save sessions to history.</p>
+        </div>
+        {% endif %}
+        
+        <div class="navigation" style="margin-top: 40px;">
+            <a href="/admin" class="btn">← Back to Admin Dashboard</a>
+        </div>
+    </div>
+</body>
+</html>

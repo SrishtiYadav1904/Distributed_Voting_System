@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Voting System</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        .control-panel {
+            background: #ecf0f1;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .status-panel {
+            background: #e8f5e8;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .database-panel {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .notifications-panel {
+            background: #fff3cd;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .btn {
+            background-color: #3498db;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+            text-decoration: none;
+            display: inline-block;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        .btn-success {
+            background-color: #27ae60;
+        }
+        .btn-success:hover {
+            background-color: #229954;
+        }
+        .btn-danger {
+            background-color: #e74c3c;
+        }
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+        .btn-warning {
+            background-color: #f39c12;
+        }
+        .btn-warning:hover {
+            background-color: #e67e22;
+        }
+        .btn:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .status-item {
+            margin: 10px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+        }
+        .status-active {
+            border-left-color: #27ae60;
+        }
+        .status-inactive {
+            border-left-color: #e74c3c;
+        }
+        .notifications-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .notification-item {
+            background: white;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            border-left: 3px solid #3498db;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+        .vote-counts {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .vote-count-item {
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            border: 2px solid #ecf0f1;
+        }
+    </style>
+    <script>
+        function startVoting() {
+            if (confirm('Are you sure you want to start voting?')) {
+                fetch('/admin/start_voting', {method: 'POST'})
+                    .then(response => response.json())
+                    .then(data => {
+                        alert(data.message);
+                        location.reload();
+                    })
+                    .catch(error => {
+                        alert('Error: ' + error);
+                    });
+            }
+        }
+        
+        function stopVoting() {
+            if (confirm('Are you sure you want to stop voting?')) {
+                fetch('/admin/stop_voting', {method: 'POST'})
+                    .then(response => response.json())
+                    .then(data => {
+                        alert(data.message);
+                        location.reload();
+                    })
+                    .catch(error => {
+                        alert('Error: ' + error);
+                    });
+            }
+        }
+        
+        function publishResults() {
+            if (confirm('Are you sure you want to publish results?')) {
+                fetch('/admin/publish_results', {method: 'POST'})
+                    .then(response => response.json())
+                    .then(data => {
+                        alert(data.message);
+                        location.reload();
+                    })
+                    .catch(error => {
+                        alert('Error: ' + error);
+                    });
+            }
+        }
+        
+        function startNewVoting() {
+            if (confirm('Are you sure you want to start a new voting session? This will save the current session to history and reset all votes.')) {
+                fetch('/admin/start_new_voting', {method: 'POST'})
+                    .then(response => response.json())
+                    .then(data => {
+                        alert(data.message);
+                        location.reload();
+                    })
+                    .catch(error => {
+                        alert('Error: ' + error);
+                    });
+            }
+        }
+        
+        function updateNotifications() {
+            fetch('/api/notifications')
+                .then(response => response.json())
+                .then(data => {
+                    const notificationsList = document.getElementById('notifications-list');
+                    notificationsList.innerHTML = '';
+                    
+                    data.notifications.forEach(notification => {
+                        const li = document.createElement('li');
+                        li.className = 'notification-item';
+                        li.textContent = notification;
+                        notificationsList.appendChild(li);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error updating notifications:', error);
+                });
+        }
+        
+        // Auto-refresh notifications every 2 seconds
+        setInterval(updateNotifications, 2000);
+        
+        // Auto-refresh page every 10 seconds
+        setInterval(() => {
+            location.reload();
+        }, 10000);
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Admin Dashboard</h1>
+        
+        <div class="grid-2">
+            <!-- Control Panel -->
+            <div class="control-panel">
+                <h2>Voting Control - Session {{ current_session or 1 }}</h2>
+                
+                {% if voting_active %}
+                    <button class="btn btn-danger" onclick="stopVoting()">⏹️ Stop Voting</button>
+                {% else %}
+                    <button class="btn btn-success" onclick="startVoting()">▶️ Start Voting</button>
+                    {% if not results_published %}
+                        <button class="btn btn-warning" onclick="publishResults()">📢 Publish Results</button>
+                    {% endif %}
+                    <button class="btn" onclick="startNewVoting()" style="background-color: #9b59b6;">🆕 Start New Voting</button>
+                {% endif %}
+                
+                <div style="margin-top: 15px;">
+                    <a href="/admin/history" class="btn" style="background-color: #34495e;">📋 View History</a>
+                </div>
+            </div>
+            
+            <!-- Status Panel -->
+            <div class="status-panel">
+                <h2>System Status</h2>
+                
+                <div class="status-item {{ 'status-active' if voting_active else 'status-inactive' }}">
+                    <strong>Voting Status:</strong> {{ 'Active' if voting_active else 'Inactive' }}
+                </div>
+                
+                <div class="status-item {{ 'status-active' if results_published else 'status-inactive' }}">
+                    <strong>Results Published:</strong> {{ 'Yes' if results_published else 'No' }}
+                </div>
+                
+                <div class="status-item">
+                    <strong>Total Votes Cast:</strong> {{ votes.values() | sum }}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Real-time Vote Counts -->
+        <div class="status-panel">
+            <h2>Real-time Vote Counts</h2>
+            <div class="vote-counts">
+                {% for candidate, count in votes.items() %}
+                <div class="vote-count-item">
+                    <strong>{{ candidate }}</strong><br>
+                    <span style="font-size: 1.5em; color: #3498db;">{{ count }}</span> votes
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- Voter Database -->
+        <div class="database-panel">
+            <h2>Voter Database</h2>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Has Voted</th>
+                        <th>Vote</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for voter in voters %}
+                    <tr>
+                        <td>{{ voter.id }}</td>
+                        <td>{{ voter.name }}</td>
+                        <td>
+                            <span style="color: {{ 'green' if voter.has_voted else 'red' }};">
+                                {{ 'Yes' if voter.has_voted else 'No' }}
+                            </span>
+                        </td>
+                        <td>{{ voter.vote or '-' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
+            <p><strong>Total Voters:</strong> {{ voters|length }}</p>
+            <p><strong>Voted:</strong> {{ voters|selectattr('has_voted')|list|length }}</p>
+            <p><strong>Not Voted:</strong> {{ voters|rejectattr('has_voted')|list|length }}</p>
+        </div>
+        
+        <!-- System Notifications -->
+        <div class="notifications-panel">
+            <h2>System Notifications</h2>
+            <ul id="notifications-list" class="notifications-list">
+                {% for notification in notifications %}
+                <li class="notification-item">{{ notification }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        
+        <div style="text-align: center; margin-top: 20px; color: #7f8c8d; font-style: italic;">
+            Page auto-refreshes every 10 seconds | Notifications update every 2 seconds
+        </div>
+    </div>
+</body>
+</html>

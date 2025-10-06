@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Results - Voting System</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .winner-announcement {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 30px;
+            color: #856404;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .vote-bar {
+            background-color: #ecf0f1;
+            height: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+        .vote-fill {
+            background-color: #3498db;
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+        .winner-row {
+            background-color: #d4edda !important;
+            font-weight: bold;
+        }
+        .navigation {
+            text-align: center;
+            margin-top: 30px;
+        }
+        .navigation a {
+            background-color: #3498db;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 5px;
+            text-decoration: none;
+            margin: 0 10px;
+            display: inline-block;
+            transition: background-color 0.3s;
+        }
+        .navigation a:hover {
+            background-color: #2980b9;
+        }
+        .summary {
+            background: #e8f5e8;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏆 Voting Results</h1>
+        
+        {% if winner %}
+        <div class="winner-announcement">
+            🎉 Winner: {{ winner }} with {{ votes[winner] }} votes!
+        </div>
+        {% endif %}
+        
+        <div class="summary">
+            <h3>Summary</h3>
+            <p><strong>Total Votes Cast:</strong> {{ total_votes }}</p>
+            <p><strong>Candidates:</strong> {{ votes|length }}</p>
+        </div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Candidate</th>
+                    <th>Votes</th>
+                    <th>Percentage</th>
+                    <th>Visual</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for candidate, vote_count in votes.items() %}
+                <tr {% if candidate == winner %}class="winner-row"{% endif %}>
+                    <td>
+                        {{ candidate }}
+                        {% if candidate == winner %}👑{% endif %}
+                    </td>
+                    <td>{{ vote_count }}</td>
+                    <td>
+                        {% if total_votes > 0 %}
+                            {{ "%.1f"|format((vote_count / total_votes * 100)) }}%
+                        {% else %}
+                            0.0%
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="vote-bar">
+                            <div class="vote-fill" style="width: {% if total_votes > 0 %}{{ (vote_count / total_votes * 100) }}%{% else %}0%{% endif %}"></div>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <div class="navigation">
+            <a href="/">Back to Voting</a>
+            <a href="/logout">Logout</a>
+        </div>
+    </div>
+</body>
+</html>
